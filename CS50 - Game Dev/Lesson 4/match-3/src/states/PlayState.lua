@@ -61,13 +61,19 @@ function PlayState:enter(params)
     self.level = params.level
 
     -- spawn a board and place it toward the right
-    self.board = params.board or Board(VIRTUAL_WIDTH - 272, 16, 1)
-    for cn, column in pairs(self.board.tiles) do
-        for rn, row in pairs(column) do
-            if self.board.tiles[cn][rn].block == false then
-                self.boardHighlightY = cn
-                self.boardHighlightX = rn
+    self.board = params.board or Board(VIRTUAL_WIDTH - 272, 16, self.level)
+    
+    for row=1, #self.board.tiles do
+        for col=1, #self.board.tiles[row] do
+            if self.board.tiles[row][col].block == false then
+                self.boardHighlightY = self.board.tiles[row][col].gridY - 1
+                self.boardHighlightX = self.board.tiles[row][col].gridX - 1
+                earlyretrun = true
+                break
             end
+        end
+        if earlyretrun then
+            break
         end
     end
 
