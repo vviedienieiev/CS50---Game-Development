@@ -13,8 +13,7 @@
 
 Board = Class{}
 
-function Board:init(x, y, level)
-    self.level = level
+function Board:init(x, y)
     self.x = x
     self.y = y
     self.matches = {}
@@ -29,34 +28,11 @@ function Board:initializeTiles()
         
         -- empty table that will serve as a new row
         table.insert(self.tiles, {})
+
         for tileX = 1, 8 do
-            if self.level % 7 == 0 then
-                if tileY == 1 and tileX % 2 == 0 then
-                    -- create a new tile at X,Y with a random color and variety
-                    table.insert(self.tiles[tileY], Tile(tileX, tileY, math.random(18), math.random(6), true))
-                elseif tileY == 8 and tileX % 2 == 1 then
-                    table.insert(self.tiles[tileY], Tile(tileX, tileY, math.random(18), math.random(6), true))
-                else
-                    table.insert(self.tiles[tileY], Tile(tileX, tileY, math.random(18), math.random(6), false))
-                end
-            elseif self.level % 5 == 0 then
-                if ((tileY >= 1 and tileY<=2) or (tileY >= 7 and tileY <= 8)) and ((tileX >= 1 and tileX<=2) or (tileX >= 7 and tileX <= 8)) then
-                    table.insert(self.tiles[tileY], Tile(tileX, tileY, math.random(18), math.random(6), true))
-                else
-                    table.insert(self.tiles[tileY], Tile(tileX, tileY, math.random(18), math.random(6), false))
-                end
-            elseif self.level % 3 == 0 then
-                if ((tileY >= 4 and tileY<=5) or (tileY >= 4 and tileY <= 5)) and ((tileX >= 4 and tileX<=5) or (tileX >= 4 and tileX <= 5)) then
-                    table.insert(self.tiles[tileY], Tile(tileX, tileY, math.random(18), math.random(6), true))
-                else
-                    table.insert(self.tiles[tileY], Tile(tileX, tileY, math.random(18), math.random(6), false))
-                end    
-            else
-                for tileX = 1, 8 do
-                    -- create a new tile at X,Y with a random color and variety
-                    table.insert(self.tiles[tileY], Tile(tileX, tileY, math.random(18), math.random(6), false))
-                end
-            end
+            
+            -- create a new tile at X,Y with a random color and variety
+            table.insert(self.tiles[tileY], Tile(tileX, tileY, math.random(18), math.random(6)))
         end
     end
 
@@ -221,7 +197,7 @@ function Board:getFallingTiles()
             if space then
                 
                 -- if the current tile is *not* a space, bring this down to the lowest space
-                if tile and tile.block == false then
+                if tile then
                     
                     -- put the tile in the correct spot in the board and fix its grid positions
                     self.tiles[spaceY][x] = tile
@@ -264,7 +240,7 @@ function Board:getFallingTiles()
             if not tile then
 
                 -- new tile with random color and variety
-                local tile = Tile(x, y, math.random(18), math.random(6), false)
+                local tile = Tile(x, y, math.random(18), math.random(6))
                 tile.y = -32
                 self.tiles[y][x] = tile
 

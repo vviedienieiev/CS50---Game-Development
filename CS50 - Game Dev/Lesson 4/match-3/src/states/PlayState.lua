@@ -61,21 +61,7 @@ function PlayState:enter(params)
     self.level = params.level
 
     -- spawn a board and place it toward the right
-    self.board = params.board or Board(VIRTUAL_WIDTH - 272, 16, self.level)
-    
-    for row=1, #self.board.tiles do
-        for col=1, #self.board.tiles[row] do
-            if self.board.tiles[row][col].block == false then
-                self.boardHighlightY = self.board.tiles[row][col].gridY - 1
-                self.boardHighlightX = self.board.tiles[row][col].gridX - 1
-                earlyretrun = true
-                break
-            end
-        end
-        if earlyretrun then
-            break
-        end
-    end
+    self.board = params.board or Board(VIRTUAL_WIDTH - 272, 16)
 
     -- grab score from params if it was passed
     self.score = params.score or 0
@@ -121,20 +107,18 @@ function PlayState:update(dt)
 
     if self.canInput then
         -- move cursor around based on bounds of grid, playing sounds
-        if love.keyboard.wasPressed('up') and self.board.tiles[math.max(0, self.boardHighlightY - 1)+1][self.boardHighlightX+1].block == false then
+        if love.keyboard.wasPressed('up') then
             self.boardHighlightY = math.max(0, self.boardHighlightY - 1)
             gSounds['select']:play()
-        elseif love.keyboard.wasPressed('down') and self.board.tiles[math.min(7, self.boardHighlightY + 1)+1][self.boardHighlightX+1].block == false then
+        elseif love.keyboard.wasPressed('down') then
             self.boardHighlightY = math.min(7, self.boardHighlightY + 1)
             gSounds['select']:play()
-        elseif love.keyboard.wasPressed('left') and self.board.tiles[self.boardHighlightY+1][math.max(0, self.boardHighlightX - 1)+1].block == false then
+        elseif love.keyboard.wasPressed('left') then
             self.boardHighlightX = math.max(0, self.boardHighlightX - 1)
             gSounds['select']:play()
-        elseif love.keyboard.wasPressed('right') and self.board.tiles[self.boardHighlightY+1][math.min(7, self.boardHighlightX + 1)+1].block == false then
+        elseif love.keyboard.wasPressed('right') then
             self.boardHighlightX = math.min(7, self.boardHighlightX + 1)
             gSounds['select']:play()
-        elseif love.keyboard.wasPressed('up') or love.keyboard.wasPressed('down') or love.keyboard.wasPressed('left') or love.keyboard.wasPressed('right') then
-            gSounds['error']:play()
         end
 
         -- if we've pressed enter, to select or deselect a tile...
@@ -170,30 +154,22 @@ function PlayState:update(dt)
                 newTile.gridX = tempX
                 newTile.gridY = tempY
 
-
-
                 -- swap tiles in the tiles table
                 self.board.tiles[self.highlightedTile.gridY][self.highlightedTile.gridX] =
                     self.highlightedTile
 
                 self.board.tiles[newTile.gridY][newTile.gridX] = newTile
 
-                local checkMatches = self.board:calculateMatches()
-                if not checkMatches then
-                    gSounds['error']:play()
-                    self:calculateMatches()
-                else
                 -- tween coordinates between the two so they swap
-                    Timer.tween(0.1, {
-                        [self.highlightedTile] = {x = newTile.x, y = newTile.y},
-                        [newTile] = {x = self.highlightedTile.x, y = self.highlightedTile.y}
-                    })
-                    
-                    -- once the swap is finished, we can tween falling blocks as needed
-                    :finish(function()
-                        self:calculateMatches()
-                    end)
-                end
+                Timer.tween(0.1, {
+                    [self.highlightedTile] = {x = newTile.x, y = newTile.y},
+                    [newTile] = {x = self.highlightedTile.x, y = self.highlightedTile.y}
+                })
+                
+                -- once the swap is finished, we can tween falling blocks as needed
+                :finish(function()
+                    self:calculateMatches()
+                end)
             end
         end
     end
@@ -217,7 +193,6 @@ function PlayState:calculateMatches()
         gSounds['match']:stop()
         gSounds['match']:play()
 
-       
         -- add score for each match
         for k, match in pairs(matches) do
             self.score = self.score + #match * 50
