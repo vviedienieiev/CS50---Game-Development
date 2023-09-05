@@ -102,6 +102,18 @@ function PlayState:update(dt)
         })
     end
 
+    Timer.every(0.5, function()
+        for row=1, #self.board.tiles do
+            for col=1, #self.board.tiles[row] do
+                self.board.tiles[row][col]:emitNew(64)
+                self.board.tiles[row][col]:update(dt)
+            end
+        end
+    end)
+
+
+    
+
     -- go to next level if we surpass score goal
     if self.score >= self.scoreGoal then
         
@@ -211,7 +223,15 @@ function PlayState:calculateMatches()
 
         -- add score for each match
         for k, match in pairs(matches) do
-            self.score = self.score + #match * 50
+            if self.board.level % 7 == 0 then
+                self.score = self.score + #match * 200
+            elseif self.board.level % 5 == 0 then
+                self.score = self.score + #match * 150
+            elseif self.board.level % 3 == 0 then
+                self.score = self.score + #match * 100
+            else
+                self.score = self.score + #match * 50
+            end
             self.timer = self.timer + #match
         end
 
@@ -239,6 +259,12 @@ end
 function PlayState:render()
     -- render board of tiles
     self.board:render()
+
+    for row=1, #self.board.tiles do
+        for col=1, #self.board.tiles[row] do
+            self.board.tiles[row][col]:renderParticles()
+        end
+    end
 
     -- render highlighted tile if it exists
     if self.highlightedTile then
