@@ -63,6 +63,20 @@ function PlayState:enter(params)
     -- spawn a board and place it toward the right
     self.board = params.board or Board(VIRTUAL_WIDTH - 272, 16)
 
+    for row=1, #self.board.tiles do
+        for col=1, #self.board.tiles[row] do
+            if self.board.tiles[row][col].block == false then
+                self.boardHighlightY = self.board.tiles[row][col].gridY - 1
+                self.boardHighlightX = self.board.tiles[row][col].gridX - 1
+                earlyretrun = true
+                break
+            end
+        end
+        if earlyretrun then
+            break
+        end
+    end
+    
     -- grab score from params if it was passed
     self.score = params.score or 0
 
@@ -107,18 +121,20 @@ function PlayState:update(dt)
 
     if self.canInput then
         -- move cursor around based on bounds of grid, playing sounds
-        if love.keyboard.wasPressed('up') then
+        if love.keyboard.wasPressed('up') and not self.board.tiles[math.max(0, self.boardHighlightY - 1) + 1][self.boardHighlightX + 1].block then
             self.boardHighlightY = math.max(0, self.boardHighlightY - 1)
             gSounds['select']:play()
-        elseif love.keyboard.wasPressed('down') then
+        elseif love.keyboard.wasPressed('down') and not self.board.tiles[math.min(7, self.boardHighlightY + 1) + 1][self.boardHighlightX + 1].block then
             self.boardHighlightY = math.min(7, self.boardHighlightY + 1)
             gSounds['select']:play()
-        elseif love.keyboard.wasPressed('left') then
+        elseif love.keyboard.wasPressed('left') and not self.board.tiles[self.boardHighlightY + 1][math.max(0, self.boardHighlightX - 1) + 1].block then
             self.boardHighlightX = math.max(0, self.boardHighlightX - 1)
             gSounds['select']:play()
-        elseif love.keyboard.wasPressed('right') then
+        elseif love.keyboard.wasPressed('right') and not self.board.tiles[self.boardHighlightY + 1][math.min(7, self.boardHighlightX + 1) + 1].block then
             self.boardHighlightX = math.min(7, self.boardHighlightX + 1)
             gSounds['select']:play()
+        elseif love.keyboard.wasPressed('up') or love.keyboard.wasPressed('down') or love.keyboard.wasPressed('left') or love.keyboard.wasPressed('right') then
+            gSounds['error']:play()
         end
 
         -- if we've pressed enter, to select or deselect a tile...
