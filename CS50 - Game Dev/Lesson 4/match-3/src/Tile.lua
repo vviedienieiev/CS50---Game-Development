@@ -27,14 +27,14 @@ function Tile:init(x, y, color, variety, block)
     self.color = color
     self.variety = variety
     self.block = block
-    if math.random(100)/100 <= 0.1 then
+    if math.random(100)/100 <= 0.3 then
         self.diamond = true
     else
         self.diamond = false
     end
 
     self.psystem = love.graphics.newParticleSystem(gTextures['particle'], 64)
-    self.psystem:setParticleLifetime(1, 2)
+    self.psystem:setParticleLifetime(0.5, 1)
     self.psystem:setLinearAcceleration(0, 0, 0, 0)
     self.psystem:setEmissionArea('normal', 5, 5)
 

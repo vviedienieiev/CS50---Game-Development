@@ -59,12 +59,13 @@ function Board:initializeTiles()
         end
     end
 
+    
     while self:calculateMatches() do
-        
         -- recursively initialize if matches were returned so we always have
         -- a matchless board on start
         self:initializeTiles()
     end
+    
 end
 
 --[[
@@ -177,9 +178,36 @@ function Board:calculateMatches()
         end
     end
 
+    
+    local diamondMatches = {}
+    for k, matchTable in pairs(matches) do
+        for l, tileV in pairs(matchTable) do
+            if tileV.diamond then
+                tileY = tileV.gridY
+                tileX = tileV.gridX
+                -- print("Diamon Tile", tileV, tileY, tileX)
+                for x=1, 8 do
+                    if not self.tiles[tileY][x].block then
+                        -- print("Other Tiles", self.tiles[tileY][x], self.tiles[tileY][x].gridY, self.tiles[tileY][x].gridX )
+                        diamondMatches[self.tiles[tileY][x]] = true
+                    end
+                end
+            end
+        end
+    end
+
+    if not next(diamondMatches) then
+    else
+        local match = {}
+        for tileV ,_ in pairs(diamondMatches) do
+            print(tileV)
+            table.insert(match, tileV)
+        end
+        table.insert(matches, match)
+    end
+
     -- store matches for later reference
     self.matches = matches
-
     -- return matches table if > 0, else just return false
     return #self.matches > 0 and self.matches or false
 end

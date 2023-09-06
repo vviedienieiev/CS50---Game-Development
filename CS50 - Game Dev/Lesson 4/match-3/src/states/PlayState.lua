@@ -37,7 +37,7 @@ function PlayState:init()
     self.highlightedTile = nil
 
     self.score = 0
-    self.timer = 60
+    self.timer = 360
 
     -- set our Timer class to turn cursor highlight on and off
     Timer.every(0.5, function()
@@ -102,17 +102,12 @@ function PlayState:update(dt)
         })
     end
 
-    Timer.every(0.5, function()
-        for row=1, #self.board.tiles do
-            for col=1, #self.board.tiles[row] do
-                self.board.tiles[row][col]:emitNew(64)
-                self.board.tiles[row][col]:update(dt)
-            end
+    for row=1, #self.board.tiles do
+        for col=1, #self.board.tiles[row] do
+            self.board.tiles[row][col]:emitNew(64)
+            self.board.tiles[row][col]:update(dt)
         end
-    end)
-
-
-    
+    end
 
     -- go to next level if we surpass score goal
     if self.score >= self.scoreGoal then
