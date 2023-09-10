@@ -60,6 +60,7 @@ SNAIL_MOVE_SPEED = 10
 -- tile IDs
 --
 TILE_ID_EMPTY = 5
+TILE_ID_FLAG = 4
 TILE_ID_GROUND = 3
 
 -- table of tiles that should trigger a collision
