@@ -68,6 +68,10 @@ COLLIDABLE_TILES = {
     TILE_ID_GROUND
 }
 
+FINISH_TILES = {
+    TILE_ID_FLAG
+}
+
 --
 -- game object IDs
 --
